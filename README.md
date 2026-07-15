@@ -57,8 +57,23 @@ sudo podman-compose up -d
 If you change `.env` **after** already starting containers, recreate them so the new value is picked up:
 
 ```bash
-sudo podman-compose down
-sudo podman-compose up -d
+sudo /usr/local/bin/podman-compose down
+sudo /usr/local/bin/podman-compose up -d
+```
+
+### `down` vs. `down -v`
+
+- **`down`** — removes containers and networks only. Named volumes (`postgresql-data`, `mongodb-data`, `chromadb-data`) are kept, so existing DB data survives. Use this for config-only changes like a `.env` edit (e.g. `LISTEN_IP`).
+- **`down -v`** — also deletes the named volumes, wiping the databases. Only use this when you actually want a clean slate (fresh DB, no leftover data).
+
+```bash
+# Config change only (keep data) — use this for LISTEN_IP-type fixes
+sudo /usr/local/bin/podman-compose down
+sudo /usr/local/bin/podman-compose up -d
+
+# Full reset (wipes DB volumes too)
+sudo /usr/local/bin/podman-compose down -v
+sudo /usr/local/bin/podman-compose up -d
 ```
 
 ## 5. Verify what's actually listening
